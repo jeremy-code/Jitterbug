@@ -74,6 +74,35 @@ The software to generate a pairing token is available for macOS, Linux, and Wind
 6. Build with `meson build && cd build && meson compile`
 7. The built executable is `build/jitterbugpair.exe` and `build/libwinpthread-1.dll`. Both files needs to be in the same directory to run.
 
+
+#### Docker
+
+##### Locally
+1. Build the image: `docker buildx build --file Dockerfile --tag jitterbugpair`
+2. `docker run \
+  --interactive \
+  --name jitterbugpair \
+  --pull never \
+  --rm \
+  --tty \
+  --volume "/var/run/usbmuxd:/var/run/usbmuxd" \
+  --volume "/var/lib/lockdown:/var/lib/lockdown" \
+  --volume "./build/:/src/Jitterbug/build" \
+  --workdir /src/Jitterbug/build \
+  jitterbugpair`
+
+#### Docker Hub
+1. Run a `jitterbug` command: `docker run -it \
+  -v "/var/run/usbmuxd:/var/run/usbmuxd" \
+  -v "/var/lib/lockdown:/var/lib/lockdown" \
+  -v "./output:/src/Jitterbug/build/output" \
+  --entrypoint /src/Jitterbug/build/jitterbugpair \
+  --workdir /src/Jitterbug/build/output \
+  jermnguyen/jitterbugpair:latest
+  --help # Remove this to run `./jitterbugpair`
+  `
+2. The pairing file will be in `./output/YOUR-UDID.mobiledevicepairing`.
+
 ## Troubleshooting
 
 ### Mount fails with "ImageMountFailed"
